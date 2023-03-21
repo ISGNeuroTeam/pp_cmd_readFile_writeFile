@@ -2,9 +2,9 @@
 Postprocessing commands "readFile" and "writeFile"
 
 ## Description
-`readFile` reads file from storage
-`writeFile` writes file to storage
-Storages configured in `config.ini` in `storages` section
+`readFile` reads file from storage  
+`writeFile` writes file to storage  
+Storages configured in `config.ini` in `storages` section  
 
 
 ### Arguments
@@ -72,7 +72,7 @@ Use `pp` to run readFile_writeFile command:
 pp
 Storage directory is /tmp/pp_cmd_test/storage
 Commmands directory is /tmp/pp_cmd_test/pp_cmd
-query: | otl_v1 <# makeresults count=100 #> |  readFile_writeFile 
+query: | otl_v1 <# makeresults count=100 #> |  writeFile test.csv
 ```
 ## Deploy
 1. Unpack archive `pp_cmd_readFile_writeFile` to postprocessing commands directory
