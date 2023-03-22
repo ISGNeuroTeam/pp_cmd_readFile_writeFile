@@ -54,10 +54,17 @@ class DfStorage:
 
     @staticmethod
     def _save_pandas_df_as_csv(df: pd.DataFrame, full_df_path: Path, mode: WriteMode):
-        csv_write_mode = 'a' if mode == WriteMode.APPEND else 'w'
-        df.to_csv(
-            full_df_path, mode=csv_write_mode
-        )
+        if mode == WriteMode.OVERWRITE:
+            df.to_csv(
+                full_df_path, index=False
+            )
+        elif mode == WriteMode.APPEND:
+            df.to_csv(
+                full_df_path, mode='a', header=None, index=False
+            )
+        else:
+            raise ValueError('Unsupported write mode')
+
 
     @staticmethod
     def _save_pandas_df_as_json(df: pd.DataFrame, full_df_path: Path, mode: WriteMode):

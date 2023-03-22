@@ -31,7 +31,7 @@ class WritefileCommand(BaseCommand):
         if storage not in storages:
             raise ValueError('Unknown storage')
 
-        mode = WriteMode(self.get_arg('mode').value)
+        mode = WriteMode(self.get_arg('mode').value or 'overwrite')
         Path(storage).mkdir(exist_ok=True, parents=True)
         df_storage = DfStorage(
             storages[storage],
