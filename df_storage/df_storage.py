@@ -1,8 +1,15 @@
 import os
+import pathlib
+
 import pandas as pd
 
+from enum import Enum
 from pathlib import Path
 
+class WriteMode(Enum):
+    OVERWRITE = 'overwrite'
+    APPEND = 'append'
+    IGNORE = 'ignore'
 
 class DfStorage:
     def __init__(self, storage_dir: str, user_id: str, private: bool = False):
@@ -16,7 +23,7 @@ class DfStorage:
         if not self.storage_dir.exists():
             self.storage_dir.mkdir(parents=True)
 
-    def write(self, df: pd.DataFrame, df_path: str, file_type=None):
+    def write(self, df: pd.DataFrame, df_path: str, file_type=None, mode: WriteMode = WriteMode.OVERWRITE):
 
         path_in_storage, df_name = self._get_path_in_storage_and_name(df_path)
 
@@ -29,24 +36,54 @@ class DfStorage:
             df_storage_dir.mkdir(parents=True, exist_ok=True)
 
         full_df_path = df_storage_dir / df_name
-        self._save_pandas_df(df, full_df_path, file_type)
+        self._save_pandas_df(df, full_df_path, file_type, mode)
 
-    def _save_pandas_df(self, df, full_df_path, file_type=None):
+    def _save_pandas_df(self, df, full_df_path: Path, file_type=None, mode: WriteMode= WriteMode.OVERWRITE):
+        if full_df_path.exists() and mode == WriteMode.IGNORE:
+            return
+
         file_type = self._get_file_type(full_df_path, file_type)
         if file_type == 'parquet':
-            df.to_parquet(
-                full_df_path, engine='pyarrow', compression=None
-            )
+            self._save_pandas_df_as_parquet(df, full_df_path, mode)
         elif file_type == 'json':
+            self._save_pandas_df_as_json(df, full_df_path, mode)
+        elif file_type == 'csv':
+            self._save_pandas_df_as_csv(df, full_df_path, mode)
+        else:
+            raise ValueError('Unknown type')
+
+    @staticmethod
+    def _save_pandas_df_as_csv(df: pd.DataFrame, full_df_path: Path, mode: WriteMode):
+        csv_write_mode = 'a' if mode == WriteMode.APPEND else 'w'
+        df.to_csv(
+            full_df_path, mode=csv_write_mode
+        )
+
+    @staticmethod
+    def _save_pandas_df_as_json(df: pd.DataFrame, full_df_path: Path, mode: WriteMode):
+        if mode == WriteMode.APPEND:
+            with open(full_df_path, mode='a') as f:
+                f.write(
+                    df.to_json(
+                        orient='records', lines=True
+                    )
+                )
+        elif mode == WriteMode.OVERWRITE:
             df.to_json(
                 full_df_path, orient='records', lines=True
             )
-        elif file_type == 'csv':
-            df.to_csv(
-                full_df_path
-            )
         else:
-            raise ValueError('Unknown type')
+            raise ValueError('Unsupported write mode type')
+    @staticmethod
+    def _save_pandas_df_as_parquet(df: pd.DataFrame, full_df_path: Path, mode: WriteMode):
+        if mode == WriteMode.OVERWRITE:
+            df.to_parquet(
+                full_df_path, engine='pyarrow', compression=None
+            )
+        elif mode == WriteMode.APPEND:
+            df.to_parquet(full_df_path, engine='fastparquet', compression=None, append=True)
+        else:
+            raise ValueError('Usupported writefile mode')
 
     def _read_pandas_df(self, full_df_path, file_type=None) -> pd.DataFrame:
         file_type = self._get_file_type(full_df_path, file_type)

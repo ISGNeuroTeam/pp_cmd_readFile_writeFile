@@ -1,1 +1,1 @@
-from .df_storage import DfStorage
+from .df_storage import DfStorage, WriteMode

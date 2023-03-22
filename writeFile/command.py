@@ -3,7 +3,7 @@ from pathlib import Path
 
 from otlang.sdk.syntax import Keyword, Positional, OTLType
 from pp_exec_env.base_command import BaseCommand, Syntax
-from df_storage import DfStorage
+from df_storage import DfStorage, WriteMode
 
 
 class WritefileCommand(BaseCommand):
@@ -13,7 +13,8 @@ class WritefileCommand(BaseCommand):
             Positional("filename", required=True, otl_type=OTLType.TEXT),
             Keyword("type", required=False, otl_type=OTLType.TEXT),
             Keyword("storage", required=False, otl_type=OTLType.TEXT),
-            Keyword("private", required=False, otl_type=OTLType.BOOLEAN)
+            Keyword("private", required=False, otl_type=OTLType.BOOLEAN),
+            Keyword("mode", required=False, otl_type=OTLType.TEXT)
         ],
     )
 
@@ -30,6 +31,7 @@ class WritefileCommand(BaseCommand):
         if storage not in storages:
             raise ValueError('Unknown storage')
 
+        mode = WriteMode(self.get_arg('mode').value)
         Path(storage).mkdir(exist_ok=True, parents=True)
         df_storage = DfStorage(
             storages[storage],
@@ -40,6 +42,7 @@ class WritefileCommand(BaseCommand):
         df_storage.write(
             df,
             self.get_arg('filename').value,
-            self.get_arg('type').value
+            self.get_arg('type').value,
+            mode
         )
         return df
