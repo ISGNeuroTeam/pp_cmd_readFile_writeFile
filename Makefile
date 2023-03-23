@@ -10,7 +10,7 @@ all:
  pack - make output archive, file name format \"pp_cmd_readFile_writeFile_vX.Y.Z_BRANCHNAME.tar.gz\"\n\
 "
 
-VERSION := "0.1.0"
+VERSION := "0.2.0"
 BRANCH := $(shell git name-rev $$(git rev-parse HEAD) | cut -d\  -f2 | sed -re 's/^(remotes\/)?origin\///' | tr '/' '_')
 
 CONDA = conda/miniconda/bin/conda
@@ -78,6 +78,8 @@ dev: venv
 	rm -rf ./venv/lib/python3.9/site-packages/postprocessing_sdk/pp_cmd/readFile
 	rm -rf ./venv/lib/python3.9/site-packages/postprocessing_sdk/pp_cmd/writeFile
 	./venv/bin/pp_sdk createcommandlinks
+	rm -rf ./venv/lib/python3.9/site-packages/df_storage
+	cd ./venv/lib/python3.9/site-packages/; ln -s -r ../../../../df_storage
 	cp ./venv/lib/python3.9/site-packages/postprocessing_sdk/pp_cmd/otl_v1/config.example.ini ./venv/lib/python3.9/site-packages/postprocessing_sdk/pp_cmd/otl_v1/config.ini
 	cp ./venv/lib/python3.9/site-packages/postprocessing_sdk/pp_cmd/readFile/config.example.ini ./venv/lib/python3.9/site-packages/postprocessing_sdk/pp_cmd/readFile/config.ini
 

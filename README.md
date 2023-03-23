@@ -2,9 +2,9 @@
 Postprocessing commands "readFile" and "writeFile"
 
 ## Description
-`readFile` reads file from storage
-`writeFile` writes file to storage
-Storages configured in `config.ini` in `storages` section
+`readFile` reads file from storage  
+`writeFile` writes file to storage  
+Storages configured in `config.ini` in `storages` section  
 
 
 ### Arguments
@@ -12,7 +12,12 @@ Storages configured in `config.ini` in `storages` section
 - type - keyword argument, file type. Supported types: csv, json, parquet
 - storage - keyword argument, storage to save(read), default is `lookups`.
 - private - keyword argument, save to (read from) user directory in storage. 
-
+- mode - keyword argument, write mode for writeFile command, default is `overwrite`.  
+    Possible values are:  
+    * overwrite - overwrite file in storage  
+    * append - append dataframe to file  
+    * ignore - ignores write operation when the file already exists  
+  
 ### Usage example
 `... | readFile books.csv, type=csv`
 #### Using paths in storage
@@ -22,7 +27,11 @@ Storages configured in `config.ini` in `storages` section
 #### Using private user folder
 `... | readFile "some_folder_in_storage/books.csv, type=csv, storage=pp_shared", private=true`  
 In that case absolute path to file is `<storage_path>/<user_guid>/<file_path_in_storage>`
+#### Using append mode in `writeFile`
+`... | writeFile books.csv, mode=append`
 
+### Important
+**Make sure that in append mode dataframe has the same columns as a target file, otherwise result file will be corrupted or exception wil be raised**
 
 ## Getting started
 ### Installing
@@ -72,7 +81,7 @@ Use `pp` to run readFile_writeFile command:
 pp
 Storage directory is /tmp/pp_cmd_test/storage
 Commmands directory is /tmp/pp_cmd_test/pp_cmd
-query: | otl_v1 <# makeresults count=100 #> |  readFile_writeFile 
+query: | otl_v1 <# makeresults count=100 #> |  writeFile test.csv
 ```
 ## Deploy
 1. Unpack archive `pp_cmd_readFile_writeFile` to postprocessing commands directory
