@@ -54,7 +54,7 @@ class DfStorage:
 
     @staticmethod
     def _save_pandas_df_as_csv(df: pd.DataFrame, full_df_path: Path, mode: WriteMode):
-        if mode == WriteMode.OVERWRITE:
+        if mode == WriteMode.OVERWRITE or not full_df_path.exists():
             df.to_csv(
                 full_df_path, index=False
             )
@@ -68,22 +68,22 @@ class DfStorage:
 
     @staticmethod
     def _save_pandas_df_as_json(df: pd.DataFrame, full_df_path: Path, mode: WriteMode):
-        if mode == WriteMode.APPEND:
+        if mode == WriteMode.OVERWRITE or not full_df_path.exists():
+            df.to_json(
+                full_df_path, orient='records', lines=True
+            )
+        elif mode == WriteMode.APPEND:
             with open(full_df_path, mode='a') as f:
                 f.write(
                     df.to_json(
                         orient='records', lines=True
                     )
                 )
-        elif mode == WriteMode.OVERWRITE:
-            df.to_json(
-                full_df_path, orient='records', lines=True
-            )
         else:
             raise ValueError('Unsupported write mode type')
     @staticmethod
     def _save_pandas_df_as_parquet(df: pd.DataFrame, full_df_path: Path, mode: WriteMode):
-        if mode == WriteMode.OVERWRITE:
+        if mode == WriteMode.OVERWRITE or not full_df_path.exists():
             df.to_parquet(
                 full_df_path, engine='pyarrow', compression=None
             )
