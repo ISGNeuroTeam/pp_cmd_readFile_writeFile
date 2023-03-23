@@ -30,7 +30,8 @@ In that case absolute path to file is `<storage_path>/<user_guid>/<file_path_in_
 #### Using append mode in `writeFile`
 `... | writeFile books.csv, mode=append`
 
-
+### Important
+**Make sure that in append mode dataframe has the same columns as a target file, otherwise result file will be corrupted or exception wil be raised**
 
 ## Getting started
 ### Installing
