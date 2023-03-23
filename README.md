@@ -12,7 +12,12 @@ Storages configured in `config.ini` in `storages` section
 - type - keyword argument, file type. Supported types: csv, json, parquet
 - storage - keyword argument, storage to save(read), default is `lookups`.
 - private - keyword argument, save to (read from) user directory in storage. 
-
+- mode - keyword argument, write mode for writeFile command, default is `overwrite`.  
+    Possible values are:  
+    * overwrite - overwrite file in storage  
+    * append - append dataframe to file  
+    * ignore - ignores write operation when the file already exists  
+  
 ### Usage example
 `... | readFile books.csv, type=csv`
 #### Using paths in storage
@@ -22,6 +27,9 @@ Storages configured in `config.ini` in `storages` section
 #### Using private user folder
 `... | readFile "some_folder_in_storage/books.csv, type=csv, storage=pp_shared", private=true`  
 In that case absolute path to file is `<storage_path>/<user_guid>/<file_path_in_storage>`
+#### Using append mode in `writeFile`
+`... | writeFile books.csv, mode=append`
+
 
 
 ## Getting started
