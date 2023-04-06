@@ -9,6 +9,7 @@ def get_read_write_args(
     else:
         storages = {}
 
+    # set default storages config
     if 'lookups' not in storages:
         storages['lookups'] = '/opt/otp/lookups'
     if 'external_data' not in storages:
@@ -26,8 +27,18 @@ def get_read_write_args(
     else:
         raise ValueError('Need path argument')
 
+
     if storage_arg is None:
-        storage_arg = 'external_data'
+        # get default storage
+        if 'defaults' in command_config and 'default_storage' in command_config['defaults']:
+            default_storage = command_config['defaults']['default_storage']
+        else:
+            default_storage = 'external_data'
+
+        if default_storage not in storages:
+            raise ValueError('Default storage not configured. Wrong configuration')
+
+        storage_arg = default_storage
 
     if storage_arg not in storages:
         raise ValueError('Unknown storage')
