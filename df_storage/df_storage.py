@@ -1,5 +1,4 @@
 import os
-import pathlib
 
 import pandas as pd
 
@@ -125,7 +124,7 @@ class DfStorage:
         elif self.user_id and private_df_full_path.exists():
             full_df_path = private_df_full_path
         else:
-            raise ValueError(f'File with path {df_path} not found')
+            raise ValueError(f'File with path `{str(df_path)}` not found in storage `{str(self.storage_dir)}`')
 
         return self._read_pandas_df(full_df_path, file_type)
 

@@ -16,7 +16,9 @@ Storages configured in `config.ini` in `storages` section
     Possible values are:  
     * overwrite - overwrite file in storage  
     * append - append dataframe to file  
-    * ignore - ignores write operation when the file already exists  
+    * ignore - ignores write operation when the file already exists
+- path - keyword argument, not required, the same as `filename` (for alternative syntax)
+- format - keyword argument, not required, the same as `type` (for alternative syntax)
   
 ### Usage example
 `... | readFile books.csv, type=csv`
@@ -29,6 +31,10 @@ Storages configured in `config.ini` in `storages` section
 In that case absolute path to file is `<storage_path>/<user_guid>/<file_path_in_storage>`
 #### Using append mode in `writeFile`
 `... | writeFile books.csv, mode=append`
+
+#### Using alternative syntax with `path` and `format` keywords  
+`... | readFile path="books.csv", format="csv"`
+
 
 ### Important
 **Make sure that in append mode dataframe has the same columns as a target file, otherwise result file will be corrupted or exception wil be raised**
@@ -72,7 +78,11 @@ Config example:
 ```ini
 [storages]
 lookups = /opt/otp/lookups
+external_data = /opt/otp/external_data
 pp_shared = /opt/otp/shared_storage/persistent
+
+[defaults]
+default_storage = external_data
 ```
 
 ### Run readFile_writeFile
