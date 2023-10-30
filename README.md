@@ -99,3 +99,5 @@ query: | otl_v1 <# makeresults count=100 #> |  writeFile test.csv
 ```
 cp /opt/otp/python_computing_node/commands/readFile/config.example.ini /opt/otp/python_computing_node/commands/readFile/config.ini 
 ```
+## Test
+Use `make test` and all test will run in Docker container. Please turn the vpn on so all the OTL dependencies would download.
